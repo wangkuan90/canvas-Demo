@@ -1,0 +1,81 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript">
+        window.onload = function () {
+            var canvas = document.getElementById("myCanvas");
+            var context = canvas.getContext("2d");
+            var btnStart = document.getElementById("btnStart");
+            var btnStop = document.getElementById("btnStop");
+
+            var isPlay = true;
+            btnStart.style.display = "none";
+
+            btnStart.onclick = function () {
+                isPlay = true;
+                this.style.display = "none";
+                btnStop.style.display = "";
+                animate();
+            }
+            btnStop.onclick = function () {
+                isPlay = false;
+                this.style.display = "none";
+                btnStart.style.display = "";
+            }
+
+            //形状类，构造函数传入起始坐标，宽度，长度
+            function Shape(x, y, width, height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.vX = 2;
+                this.vY = 2;
+            }
+
+            var shapes = [];
+            //随即产生形状
+            for (var i = 0; i < 10; i++) {
+                var x = Math.random() * 250;
+                var y = Math.random() * 250;
+                var width = Math.random() * 50;
+                shapes.push(new Shape(x, y, width, width));
+            }
+
+            function animate() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                var len = shapes.length;
+                for (var i = 0; i < len; i++) {
+                    var tmpShape = shapes[i];
+                    //检测是否是边界，是的话速度反转
+                    if ((tmpShape.x + tmpShape.width > canvas.width && tmpShape.vX > 0)
+                        || (tmpShape.x < 0 && tmpShape.vX < 0))  {
+                        tmpShape.vX = -tmpShape.vX;
+                    }
+
+                    if ((tmpShape.y + tmpShape.height > canvas.height && tmpShape.vY > 0)
+                       || (tmpShape.y < 0 && tmpShape.vY < 0)) {
+                        tmpShape.vY = -tmpShape.vY;         
+                    }
+                    tmpShape.x += tmpShape.vX;
+                    tmpShape.y += tmpShape.vY;
+                    context.fillRect(tmpShape.x, tmpShape.y, tmpShape.width, tmpShape.height);
+
+                }
+
+                if (isPlay)
+                    setTimeout(animate, 33);
+            }
+            animate();
+        }
+       
+    </script>
+</head>
+<body>
+    <canvas id="myCanvas" height="500px" width="500px" style="border:1px black solid">
+    </canvas>
+    <input id="btnStart" type="button" value="start" >
+    <input id="btnStop" type="button" value="stop" >
+</body>
+</html>

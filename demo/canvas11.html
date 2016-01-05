@@ -1,0 +1,86 @@
+<!DOCTYPE html >
+<html>
+<head>
+	<meta charset="utf-8" />
+    <title>旋转</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            var canvas = document.getElementById("myCanvas");
+            var context = canvas.getContext("2d");
+            var btnStart = document.getElementById("btnStart");
+            var btnStop = document.getElementById("btnStop");
+
+            var isPlay = true;
+            btnStart.style.display = "none";
+
+            btnStart.onclick = function () {
+                isPlay = true;
+                this.style.display = "none";
+                btnStop.style.display = "";
+                animate();
+            }
+            btnStop.onclick = function () {
+                isPlay = false;
+                this.style.display = "none";
+                btnStart.style.display = "";
+            }
+
+            //形状类，构造函数传入起始坐标，半径，起始角度
+            function Shape(x, y, radius, angle) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                if (angle == undefined) {
+                    this.angle = 0;
+                }
+                else {
+                    this.angle = angle;
+                }
+            }
+
+            var shapes = [];
+            //随即产生形状
+            for (var i = 0; i < 10; i++) {
+                var x = Math.random() * 250;
+                var y = Math.random() * 250;
+                var radius = Math.random() * 50;
+                shapes.push(new Shape(x, y, 30));
+            }
+
+            function animate() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                var len = shapes.length;
+                for (var i = 0; i < len; i++) {
+                    var tmpShape = shapes[i];
+
+                    var angle = tmpShape.angle + Math.PI / 100;
+                    if (angle > Math.PI * 2)
+                        angle = 0;
+                    tmpShape.angle = angle;
+                    //半径是直角三角形斜边，根据角度计算x和y的偏移
+                    var x = tmpShape.radius * Math.cos(angle);
+                    var y = tmpShape.radius * Math.sin(angle);
+                    //画出半径轨迹
+                    context.beginPath();
+                    context.moveTo(tmpShape.x, tmpShape.y);
+                    context.lineTo(tmpShape.x + x, tmpShape.y + y);
+                    context.stroke();
+                    context.fillRect(tmpShape.x + x-5, tmpShape.y + y-5, 10, 10);
+
+                }
+
+                if (isPlay)
+                    setTimeout(animate, 33);
+            }
+            animate();
+        }
+       
+    </script>
+</head>
+<body>
+    <canvas id="myCanvas" height="500px" width="500px" style="border:1px black solid">
+    </canvas>
+    <input id="btnStart" type="button" value="start" >
+    <input id="btnStop" type="button" value="stop" >
+</body>
+</html>

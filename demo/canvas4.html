@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title></title>
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var cancans = document.getElementById("myCanvas");
+            //得到2D渲染上下文
+            var context = document.getElementById("myCanvas").getContext("2d");
+
+            context.fillRect(0, 0, 100, 100);
+            context.fillStyle = "red";
+            context.fillRect(0, 0, 50, 50);
+
+            DisplayColor();
+            document.getElementById("btnRestore").onclick = function () {
+                context.restore();
+                DisplayColor();
+                alert("RestoredColor:" + context.fillStyle);
+            };
+
+            document.getElementById("btnDraw").onclick = function () {
+                context.fillRect(0, 0, 50, 50);
+            };
+
+            document.getElementById("btnSetColor").onclick = function () {
+                var color = document.getElementById("txtColor").value;
+                context.fillStyle = color;
+                DisplayColor();
+            };
+            document.getElementById("btnSave").onclick = function () {
+                context.save();
+                alert("SavedColor:" + context.fillStyle);
+            };
+
+            function DisplayColor() {
+                document.getElementById("spancolor").innerHTML = context.fillStyle;
+            }
+        };
+    </script>
+</head>
+<body>
+    <input type="button" id="btnRestore" value="Restore" >
+    <input type="button" id="btnSave" value="Save" >
+    <input type="button" id="btnDraw" value="Draw" >
+    <input type="button" id="btnSetColor" value="SetColor" >
+    <input type="text" id="txtColor" >
+    <span>currentColor:</span><span id="spancolor"></span>
+    <canvas id="myCanvas" height="300px" width="500px">
+    </canvas>
+</body>
+</html>

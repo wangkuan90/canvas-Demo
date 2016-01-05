@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>像素处理</title>
+
+    <script  type="text/javascript">
+        window.onload = function () {
+            var cancans = document.getElementById("myCanvas");
+            //得到2D渲染上下文
+            var context = document.getElementById("myCanvas").getContext("2d");
+            var imageData = context.createImageData(200, 200);
+            var pixels = imageData.data;
+            var numPixels = imageData.height * imageData.width;
+
+            for (var i = 0; i < numPixels; i++) {
+                pixels[i * 4] = 255;
+                pixels[i * 4 + 1] = 0;
+                pixels[i * 4 + 2] = 0;
+                pixels[i * 4 + 3] = 255;
+            }
+            context.putImageData(imageData, 0, 0);
+
+            //随机图片
+            for (i = 0; i < numPixels; i++) {
+                pixels[i * 4] = Math.floor(Math.random() * 255);
+                pixels[i * 4 + 1] = Math.floor(Math.random() * 255);
+                pixels[i * 4 + 2] = Math.floor(Math.random() * 255);
+                pixels[i * 4 + 3] = Math.floor(Math.random() * 255);
+            }
+            context.putImageData(imageData, 200, 0);
+
+            for (var x = 0; x < imageData.width; x++) {
+                for (var y = 0; y < imageData.height; y++) {
+                    pixelRed = x * imageData.width * 4 + y * 4;
+                    pixelGreen = pixelRed + 1;
+                    pixelBlue = pixelRed + 2;
+                    pixelAlpha = pixelRed + 3;
+
+                    if (x < 100 && y < 100) {
+                        pixels[pixelRed] = 255;
+                        pixels[pixelGreen] = 0;
+                        pixels[pixelBlue] = 0;
+                        pixels[pixelAlpha] = 255;
+                    }
+                    else {
+                        pixels[pixelRed] = 0;
+                        pixels[pixelGreen] = 255;
+                        pixels[pixelBlue] = 0;
+                        pixels[pixelAlpha] = 255;
+                    }
+                }
+            }
+            //后4个参数分别是，imagedata画上去时的原点坐标dx,dy，宽度，长度
+            //后面的dx,dy是相对前2个参数x,y的偏移，图形会偏移
+            //就是实际画的位置是(x+dx,y+dy)
+            context.putImageData(imageData, 0, 200, 50, 0, 100, 100);
+
+
+            //马赛克效果
+            var img2 = new Image();
+
+            img2.src = "img/photo.jpeg";
+            img2.onload = function () {
+                context.drawImage(img2, 0, 0, img2.width, img2.height, 200, 200, 200, 200);
+                var imagedata = context.getImageData(200, 200, 200, 200);
+                pdata = imagedata.data;
+                var numTilerows = 100;//行色块个数
+                var numTilecols = 100;//列色块个数
+                var tileWitdh = Math.floor(imagedata.width / numTilecols);
+                var tileHight = Math.floor(imagedata.height / numTilerows);
+
+                for (var i = 0; i < numTilerows; i++) {
+                    for (var j = 0; j < numTilecols; j++) {
+                        var tempData = context.getImageData(200 + j * tileWitdh, 200 + i * tileHight, 1, 1).data;
+                        var pR = tempData[0];
+                        var pG = tempData[1];
+                        var pB = tempData[2];
+                        var pA = tempData[3];
+                        
+                        var pixelColor = "rgba(" + pR + "," + pG + "," + pB + "," + pA + ")";
+                        context.fillStyle = pixelColor;
+                        context.fillRect(200 + j * tileWitdh, 200 + i * tileHight, tileWitdh, tileHight);
+                        //也可以先操作图片的每个像素，最后画到画布里
+//                        for (var tr = 0; tr < tileHight; tr++) {
+//                            for (var td = 0; td < tileWitdh; td++) {
+//                                var t = (i * tileHight + tr) * 4 * imagedata.width + (j * tileWitdh + td) * 4;
+//                                pdata[t] = pR;
+//                                pdata[t + 1] = pG;
+//                                pdata[t + 2] = pB;
+//                                pdata[t + 3] = pA;
+//                            }
+//                        }
+                    }
+                }
+               // context.putImageData(imagedata, 200, 200, 200, 200);
+            }
+        };
+    </script>
+</head>
+<body>
+    <canvas id="myCanvas" height="500px" width="500px" style="border:1px black solid">
+    </canvas>
+</body>
+</html>
